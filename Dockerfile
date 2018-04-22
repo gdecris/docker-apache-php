@@ -1,6 +1,13 @@
 FROM ubuntu:16.04
 
-MAINTAINER Giovanni DeCristofaro
+LABEL maintainer="Giovanni DeCristofaro"
+
+# Manually set up the apache environment variables
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_LOCK_DIR /var/lock/apache2
+ENV APACHE_PID_FILE /var/run/apache2.pid
 
 # Install apache and depnendencies
 RUN apt-get update && apt-get install -y apache2 curl \
@@ -26,4 +33,4 @@ COPY apache-site.conf /etc/apache2/sites-enabled/000-default.conf
 RUN apt-get remove -y --purge software-properties-common && apt-get -y autoremove && apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-CMD apachectl -f /etc/apache2/apache2.conf -DFOREGROUND
+CMD ["/usr/sbin/apache2", "-DFOREGROUND"]
